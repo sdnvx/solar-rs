@@ -1,0 +1,5 @@
+[mars]
+satellites = [
+    "phobos",
+    "deimos"
+]

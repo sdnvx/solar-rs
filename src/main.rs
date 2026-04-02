@@ -3,10 +3,13 @@ use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
- use std::sync::{Mutex, MutexGuard, OnceLock};
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 use clap::Parser;
 use serde::Deserialize;
+
+use ash::Entry;
+use ash::vk::*;
 
 /// Solar system simulator
 #[derive(Parser, Debug)]
@@ -56,6 +59,9 @@ fn main() -> ExitCode {
             }
         }
     }
+    println!();
+
+    let version = init_vulkan();
 
     return ExitCode::SUCCESS;
 }
@@ -97,7 +103,32 @@ fn read_data(path: &Path) {
     let data: CelestialSet = toml::from_str(&contents).unwrap();
 
     for (key, entry) in data.objects.into_iter() {
-        println!("... {:?}", entry.name);
+        println!("... {}", entry.name);
         map.insert(key, entry);
     }
+}
+
+fn init_vulkan() -> u32 {
+    println!("Initializing Vulkan...");
+
+    let entry = unsafe {
+        match Entry::load() {
+            Ok(result) => result,
+            Err(msg) => {
+                panic!("Unable to initialize Vulkan: {}", msg);
+            }
+        }
+    };
+
+    let version = unsafe {
+        entry.try_enumerate_instance_version()
+       .expect("Unable to enumerate Vulkan instance version")
+    };
+
+    let api_version = match version {
+        Some(version) => version,
+        None => API_VERSION_1_0
+    };
+
+    api_version
 }

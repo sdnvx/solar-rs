@@ -11,96 +11,500 @@ satellites = [
     "ganymede",
     "callisto",
     "themisto",
-    "s/2011-j4",
+    "s2011j4",
     "leda",
     "ersa",
-    "s/2018-j2",
+    "s2018j2",
     "himalia",
     "pandia",
     "lysithea",
     "elara",
-    "s/2011-j3",
+    "s2011j3",
     "dia",
-    "s/2018-j4",
+    "s2018j4",
     "carpo",
     "valetudo",
     "euporie",
-    "s/2003-j18",
+    "s2003j18",
     "eupheme",
-    "s/2021-j3",
-    "s/2010-j2",
-    "s/2016-j1",
+    "s2021j3",
+    "s2010j2",
+    "s2016j1",
     "mneme",
     "euanthe",
-    "s/2003-j16",
+    "s2003j16",
     "harpalyke",
     "orthosie",
     "helike",
-    "s/2021-j2",
+    "s2021j2",
     "praxidike",
-    "s/2017-j3",
-    "s/2021-j1",
-    "s/2003-j12",
-    "s/2017-j7",
+    "s2017j3",
+    "s2021j1",
+    "s2003j12",
+    "s2017j7",
     "thelxinoe",
     "thyone",
-    "s/2003-j2",
-    "s/2022-j3",
+    "s2003j2",
+    "s2022j3",
     "ananke",
     "iocaste",
-    "s/2017-j10",
+    "s2017j10",
     "hermippe",
-    "s/2017-j9",
+    "s2017j9",
     "philo­phrosyne",
-    "s/2016-j3",
-    "s/2022-j1",
-    "s/2017-j8",
+    "s2016j3",
+    "s2022j1",
+    "s2017j8",
     "pasithee",
-    "s/2021-j6",
-    "s/2003-j24",
+    "s2021j6",
+    "s2003j24",
     "eurydome",
-    "s/2011-j2",
-    "s/2003-j4",
+    "s2011j2",
+    "s2003j4",
     "chaldene",
-    "s/2017-j2",
+    "s2017j2",
     "isonoe",
-    "s/2017-j11",
+    "s2017j11",
     "kallichore",
-    "s/2021-j4",
+    "s2021j4",
     "erinome",
     "kale",
     "eirene",
     "aitne",
     "eukelade",
-    "s/2002-j2",
+    "s2002j2",
     "arche",
     "taygete",
-    "s/2016-j4",
-    "s/2011-j1",
+    "s2016j4",
+    "s2011j1",
     "carme",
     "herse",
-    "s/2003-j19",
-    "s/2010-j1",
-    "s/2003-j9",
-    "s/2017-j5",
-    "s/2017-j6",
-    "s/2018-j5",
+    "s2003j19",
+    "s2010j1",
+    "s2003j9",
+    "s2017j5",
+    "s2017j6",
+    "s2018j5",
     "kalyke",
     "hegemone",
-    "s/2003-j10",
-    "s/2018-j3",
-    "s/2021-j5",
-    "s/2024-j1",
+    "s2003j10",
+    "s2018j3",
+    "s2021j5",
+    "s2024j1",
     "pasiphae",
-    "s/2011-j5",
+    "s2011j5",
     "sponde",
     "megaclite",
     "cyllene",
     "sinope",
-    "s/2017-j1",
+    "s2017j1",
     "aoede",
     "autonoe",
     "callirrhoe",
-    "s/2003-j23",
+    "s2003j23",
     "kore"
 ]
+
+[metis]
+name = "Metis"
+kind = "MOON"
+
+[adrastea]
+name = "Adrastea"
+kind = "MOON"
+
+[amalthea]
+name = "Amalthea"
+kind = "MOON"
+
+[thebe]
+name = "Thebe"
+kind = "MOON"
+
+[io]
+name = "Io"
+kind = "MOON"
+
+[europa]
+name = "Europe"
+kind = "MOON"
+
+[ganymede]
+name = "Ganymede"
+kind = "MOON"
+
+[callisto]
+name = "Callisto"
+kind = "MOON"
+
+[themisto]
+name = "Themisto"
+kind = "MOON"
+
+[s2011j4]
+name = "S/2011-J4"
+kind = "MOON"
+
+[leda]
+name = "Leda"
+kind = "MOON"
+
+[ersa]
+name = "Ersa"
+kind = "MOON"
+
+[s2018j2]
+name = "S/2018-J2"
+kind = "MOON"
+
+[himalia]
+name = "Himalia"
+kind = "MOON"
+
+[pandia]
+name = "Pandia"
+kind = "MOON"
+
+[lysithea]
+name = "Lysithea"
+kind = "MOON"
+
+[elara]
+name = "Elara"
+kind = "MOON"
+
+[s2011j3]
+name = "S/2011-J3"
+kind = "MOON"
+
+[dia]
+name = "Dia"
+kind = "MOON"
+
+[s2018j4]
+name = "S/2018-J4"
+kind = "MOON"
+
+[carpo]
+name = "Carpo"
+kind = "MOON"
+
+[valetudo]
+name = "Valetudo"
+kind = "MOON"
+
+[euporie]
+name = "Euphorie"
+kind = "MOON"
+
+[s2003j18]
+name = "S/2003-J18"
+kind = "MOON"
+
+[eupheme]
+name = "Eupheme"
+kind = "MOON"
+
+[s2021j3]
+name = "S/2021-J3"
+kind = "MOON"
+
+[s2010j2]
+name = "S/2010-J2"
+kind = "MOON"
+
+[s2016j1]
+name = "S/2016-J1"
+kind = "MOON"
+
+[mneme]
+name = "Mneme"
+kind = "MOON"
+
+[euanthe]
+name = "Euanthe"
+kind = "MOON"
+
+[s2003j16]
+name = "S/2003-J16"
+kind = "MOON"
+
+[harpalyke]
+name = "Harpalyke"
+kind = "MOON"
+
+[orthosie]
+name = "Orthosie"
+kind = "MOON"
+
+[helike]
+name = "Helike"
+kind = "MOON"
+
+[s2021j2]
+name = "S/2021-J2"
+kind = "MOON"
+
+["praxidike"]
+name = "Praxidike"
+kind = "MOON"
+
+["s2017j3"]
+name = "S/2017-J3"
+kind = "MOON"
+
+["s2021j1"]
+name = "S/2021-J1"
+kind = "MOON"
+
+["s2003j12"]
+name = "S/2003-J12"
+kind = "MOON"
+
+["s2017j7"]
+name = "S/2017-J7"
+kind = "MOON"
+
+[thelxinoe]
+name = "Thelxinoe"
+kind = "MOON"
+
+[thyone]
+name = "Thyone"
+kind = "MOON"
+
+[s2003j2]
+name = "S/2003-J2"
+kind = "MOON"
+
+[s2022j3]
+name = "S/2022-J3"
+kind = "MOON"
+
+[ananke]
+name = "Ananke"
+kind = "MOON"
+
+[iocaste]
+name = "Iocaste"
+kind = "MOON"
+
+[s2017j10]
+name = "S/2017-J10"
+kind = "MOON"
+
+[hermippe]
+name = "Hermippe"
+kind = "MOON"
+
+[s2017j9]
+name = "S/2017-J9"
+kind = "MOON"
+
+[psylophrosyne]
+name = "Psylophrosyne"
+kind = "MOON"
+
+[s2016j3]
+name = "S/2016-J3"
+kind = "MOON"
+
+[s2022j1]
+name = "S/2022-J1"
+kind = "MOON"
+
+[s2017j8]
+name = "S/2017-J8"
+kind = "MOON"
+
+[pasithee]
+name = "Pasithee"
+kind = "MOON"
+
+[s2021j6]
+name = "S/2021-J6"
+kind = "MOON"
+
+[s2003j24]
+name = "S/2003-J24"
+kind = "MOON"
+
+[eurydome]
+name = "Eurydome"
+kind = "MOON"
+
+[s2011j2]
+name = "S/2011-J2"
+kind = "MOON"
+
+[s2003j4]
+name = "S/2003-J4"
+kind = "MOON"
+
+[chaldene]
+name = "Chaldene"
+kind = "MOON"
+
+[s2017j2]
+name = "S/2017-J2"
+kind = "MOON"
+
+[isonoe]
+name = "Isonoe"
+kind = "MOON"
+
+[s2017j11]
+name = "S/2017-J11"
+kind = "MOON"
+
+[kallichore]
+name = "Kallichore"
+kind = "MOON"
+
+[s2021j4]
+name = "S/2021-J4"
+kind = "MOON"
+
+[erinome]
+name = "Erinome"
+kind = "MOON"
+
+[kale]
+name = "Kale"
+kind = "MOON"
+
+[eirene]
+name = "Eirene"
+kind = "MOON"
+
+[aitne]
+name = "Aitne"
+kind = "MOON"
+
+[eukelade]
+name = "Eukelade"
+kind = "MOON"
+
+[s2002j2]
+name = "S/2002-J2"
+kind = "MOON"
+
+[arche]
+name = "Arche"
+kind = "MOON"
+
+[taygete]
+name = "Taygete"
+kind = "MOON"
+
+[s2016j4]
+name = "S/2016-J4"
+kind = "MOON"
+
+[s2011j1]
+name = "S/2011-J1"
+kind = "MOON"
+
+[carme]
+name = "Carme"
+kind = "MOON"
+
+[herse]
+name = "Herse"
+kind = "MOON"
+
+[s2003j19]
+name = "S/2003-J19"
+kind = "MOON"
+
+[s2010j1]
+name = "S/2010-J1"
+kind = "MOON"
+
+[s2003j9]
+name = "S/2003-J9"
+kind = "MOON"
+
+[s2017j5]
+name = "S/2017-J5"
+kind = "MOON"
+
+[s2017j6]
+name = "S/2017-J6"
+kind = "MOON"
+
+[s2018j5]
+name = "S/2018-J5"
+kind = "MOON"
+
+[kalyke]
+name = "Kalyke"
+kind = "MOON"
+
+[hegemone]
+name = "Hegemone"
+kind = "MOON"
+
+[s2003j10]
+name = "S/2003-J10"
+kind = "MOON"
+
+[s2018j3]
+name = "S/2018-J3"
+kind = "MOON"
+
+[s2021j5]
+name = "S/2021-J5"
+kind = "MOON"
+
+[s2024j1]
+name = "S/2024-J1"
+kind = "MOON"
+
+[pasiphae]
+name = "Pasiphae"
+kind = "MOON"
+
+[s2011j5]
+name = "S/2011-J5"
+kind = "MOON"
+
+[sponde]
+name = "Sponde"
+kind = "MOON"
+
+[megaclite]
+name = "Megaclite"
+kind = "MOON"
+
+[cyllene]
+name = "Cyllene"
+kind = "MOON"
+
+[sinope]
+name = "Sinope"
+kind = "MOON"
+
+[s2017j1]
+name = "S/2017-J1"
+kind = "MOON"
+
+[aoede]
+name = "Aoede"
+kind = "MOON"
+
+[autonoe]
+name = "Autonoe"
+kind = "MOON"
+
+[callirrhoe]
+name = "Callirrhoe"
+kind = "MOON"
+
+[s2003j23]
+name = "S/2003-J23"
+kind = "MOON"
+
+[kore]
+name = "Kore"
+kind = "MOON"

@@ -4,13 +4,19 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::sync::{Mutex, MutexGuard, OnceLock};
+use std::thread::sleep;
+use std::time::Duration;
 
 use clap::Parser;
 use serde::Deserialize;
 
+use sdl3::Sdl;
+use sdl3::event::Event;
+use sdl3::keyboard::Keycode;
+use sdl3::video::Window;
+
 use ash::Entry;
 use ash::vk::*;
-use sdl3::video::Window;
 
 /// Solar system simulator
 #[derive(Parser, Debug)]
@@ -62,8 +68,25 @@ fn main() -> ExitCode {
     }
     println!();
 
-    let mut window = create_window();
+    let sdl_context = sdl3::init().unwrap();
+    let window = create_window(&sdl_context);
+
     let version = init_vulkan();
+
+    let mut event_pump = sdl_context.event_pump().unwrap();
+    'running: loop {
+        for event in event_pump.poll_iter() {
+            match event {
+                Event::Quit {..} |
+                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                    break 'running
+                },
+                _ => {}
+            }
+        }
+
+        sleep(Duration::new(0, 1_000_000_000u32 / 60));
+    }
 
     return ExitCode::SUCCESS;
 }
@@ -110,8 +133,7 @@ fn read_data(path: &Path) {
     }
 }
 
-fn create_window() -> Window {
-    let sdl_context = sdl3::init().unwrap();
+fn create_window(sdl_context: &Sdl) -> Window {
     let video_subsystem = sdl_context.video().unwrap();
 
     return video_subsystem

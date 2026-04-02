@@ -1,6 +1,6 @@
 [mars]
 name = "Mars"
-kind = "planet"
+kind = "PLANET"
 satellites = [
     "phobos",
     "deimos"
@@ -8,7 +8,7 @@ satellites = [
 
 [phobos]
 name = "Phobos"
-kind = "moon"
+kind = "MOON"
 orbital_period = 7.66 # h
 eccentricity = 0.0151
 inclination = 1.093 # deg
@@ -17,7 +17,7 @@ axial_tilt = 0 # deg
 
 [deimos]
 name = "Deimos"
-kind = "moon"
+kind = "MOON"
 orbital_period = 30.31 # h
 eccentricity = 0.00033
 inclination = 0.93 #deg

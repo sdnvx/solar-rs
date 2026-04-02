@@ -1,6 +1,6 @@
 [sun]
 name = "Sun"
-kind = "star"
+kind = "STAR"
 radius = 695700
 flattening = 0.00005
 axial_tilt = 7.25

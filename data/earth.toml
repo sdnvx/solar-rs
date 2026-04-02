@@ -1,6 +1,6 @@
 [earth]
 name = "Earth"
-kind = "planet"
+kind = "PLANET"
 satellites = [
     "moon"
 ]

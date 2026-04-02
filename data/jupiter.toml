@@ -1,6 +1,6 @@
 [jupiter]
 name = "Jupiter"
-kind = "planet"
+kind = "PLANET"
 satellites = [
     "metis",
     "adrastea",

@@ -1,5 +1,25 @@
 [mars]
+name = "Mars"
+kind = "planet"
 satellites = [
     "phobos",
     "deimos"
 ]
+
+[phobos]
+name = "Phobos"
+kind = "moon"
+orbital_period = 7.66 # h
+eccentricity = 0.0151
+inclination = 1.093 # deg
+mean_radius = 11.08 # km
+axial_tilt = 0 # deg
+
+[deimos]
+name = "Deimos"
+kind = "moon"
+orbital_period = 30.31 # h
+eccentricity = 0.00033
+inclination = 0.93 #deg
+mean_radius = 6.27 # km
+axial_tilt = 0 # deg

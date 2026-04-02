@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::path::Path;
 use std::process::ExitCode;
 
@@ -11,6 +12,19 @@ struct Args {
     #[arg(short, long, default_value = "data")]
     data: String
 }
+
+enum CelestialType {
+    STAR,
+    PLANET,
+    MOON
+}
+
+struct CelestialBody {
+    name: String,
+    kind: CelestialType
+}
+
+static mut OBJECTS: BTreeMap::<String, CelestialBody> = BTreeMap::new();
 
 fn main() -> ExitCode {
     let args = Args::parse();

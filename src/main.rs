@@ -10,6 +10,7 @@ use serde::Deserialize;
 
 use ash::Entry;
 use ash::vk::*;
+use sdl3::video::Window;
 
 /// Solar system simulator
 #[derive(Parser, Debug)]
@@ -61,6 +62,7 @@ fn main() -> ExitCode {
     }
     println!();
 
+    let mut window = create_window();
     let version = init_vulkan();
 
     return ExitCode::SUCCESS;
@@ -106,6 +108,19 @@ fn read_data(path: &Path) {
         println!("... {}", entry.name);
         map.insert(key, entry);
     }
+}
+
+fn create_window() -> Window {
+    let sdl_context = sdl3::init().unwrap();
+    let video_subsystem = sdl_context.video().unwrap();
+
+    return video_subsystem
+        .window("Solar/RS", 800, 600)
+        .position_centered()
+        .resizable()
+        .vulkan()
+        .build()
+        .unwrap();
 }
 
 fn init_vulkan() -> u32 {

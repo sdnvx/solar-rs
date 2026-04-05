@@ -11,5 +11,6 @@ path = "src/main.rs"
 ash = "0.38.0"
 clap = { version = "4.6.0", features = ["derive"] }
 sdl3 = { version = "0", features = ["ash"] }
+sdl3-sys = { version = "0", features = ["use-ash-v0-38"] }
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.8"

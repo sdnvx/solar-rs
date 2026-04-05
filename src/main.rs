@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::ffi::CString;
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
@@ -10,12 +11,14 @@ use std::time::Duration;
 use clap::Parser;
 use serde::Deserialize;
 
+extern crate sdl3;
 use sdl3::Sdl;
 use sdl3::event::Event;
 use sdl3::keyboard::Keycode;
 use sdl3::video::Window;
+use sdl3_sys::vulkan::*;
 
-use ash::Entry;
+use ash::{self, vk, Entry};
 use ash::vk::*;
 
 /// Solar system simulator
@@ -68,12 +71,11 @@ fn main() -> ExitCode {
     }
     println!();
 
-    let sdl_context = sdl3::init().unwrap();
-    let window = create_window(&sdl_context);
+    let context  = sdl3::init().unwrap();
+    let window   = create_window(&context);
+    let instance = create_vulkan_instance(&window);
 
-    let version = init_vulkan();
-
-    let mut event_pump = sdl_context.event_pump().unwrap();
+    let mut event_pump = context.event_pump().unwrap();
     'running: loop {
         for event in event_pump.poll_iter() {
             match event {
@@ -128,7 +130,6 @@ fn read_data(path: &Path) {
     let data: CelestialSet = toml::from_str(&contents).unwrap();
 
     for (key, entry) in data.objects.into_iter() {
-        println!("... {}", entry.name);
         map.insert(key, entry);
     }
 }
@@ -145,7 +146,7 @@ fn create_window(sdl_context: &Sdl) -> Window {
         .unwrap();
 }
 
-fn init_vulkan() -> u32 {
+fn create_vulkan_instance(window: &Window) -> Entry {
     println!("Initializing Vulkan...");
 
     let entry = unsafe {
@@ -157,9 +158,48 @@ fn init_vulkan() -> u32 {
         }
     };
 
+    dump_vulkan_version(&entry);
+    dump_vulkan_extensions(&entry);
+
+    let app_name = CString::new("Solar/RS").unwrap();
+    let app_info = vk::ApplicationInfo::default()
+        .application_name(&app_name)
+        .application_version(vk::make_api_version(0, 1, 0, 0))
+        .api_version(vk::API_VERSION_1_3);
+
+    let mut extensions = Vec::new();
+    extensions.push(vk::KHR_PORTABILITY_ENUMERATION_NAME.as_ptr());
+
+    let create_flags = vk::InstanceCreateFlags::ENUMERATE_PORTABILITY_KHR;
+    let create_info = vk::InstanceCreateInfo::default()
+        .application_info(&app_info)
+        .enabled_extension_names(&extensions)
+        .flags(create_flags);
+
+    let instance = unsafe {
+        entry
+            .create_instance(&create_info, None)
+            .expect("Unable to create Vulkan instance")
+    };
+
+    let mut surface = vk::SurfaceKHR::null();
+    unsafe {
+        SDL_Vulkan_CreateSurface(
+            window.raw(),
+            instance.handle(),
+            std::ptr::null(),
+            &mut surface as *mut _ as *mut _
+        );
+    }
+
+    return entry;
+}
+
+fn dump_vulkan_version(entry: &Entry) {
     let version = unsafe {
-        entry.try_enumerate_instance_version()
-       .expect("Unable to enumerate Vulkan instance version")
+        entry
+            .try_enumerate_instance_version()
+            .expect("Unable to enumerate Vulkan instance version")
     };
 
     let api_version = match version {
@@ -167,5 +207,22 @@ fn init_vulkan() -> u32 {
         None => API_VERSION_1_0
     };
 
-    api_version
+    let major = vk::api_version_major(api_version);
+    let minor = vk::api_version_minor(api_version);
+    let patch = vk::api_version_patch(api_version);
+
+    println!("# Vulkan {}.{}.{}", major, minor, patch);
+}
+
+fn dump_vulkan_extensions(entry: &Entry) {
+    let extensions = unsafe {
+        entry
+            .enumerate_instance_extension_properties(None)
+            .expect("Unable to enumerate Vulkan extensions")
+    };
+
+    for extension in extensions {
+        let name = extension.extension_name_as_c_str().unwrap();
+        println!("# {}", name.to_string_lossy());
+    }
 }

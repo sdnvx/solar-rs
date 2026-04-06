@@ -10,6 +10,9 @@ use std::time::Duration;
 
 use clap::Parser;
 use serde::Deserialize;
+use tracing::{info};
+use tracing_subscriber;
+use tracing_subscriber::fmt;
 
 extern crate sdl3;
 use sdl3::Sdl;
@@ -56,9 +59,17 @@ fn main() -> ExitCode {
     println!("Copyright (c) 2026, Dmitry Sednev <dmitry@sednev.ru>");
     println!();
 
-    let data_dir = get_data_dir(&args.data);
-    println!("Reading data from {}...", data_dir.display());
+    fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .without_time()
+        .with_target(false)
+        .compact()
+        .with_ansi(true)
+        .init();
 
+    let data_dir = get_data_dir(&args.data);
+
+    info!("Scanning {}...", data_dir.display());
     for entry in std::fs::read_dir(&data_dir).unwrap() {
         match entry {
             Ok(path) => {
@@ -69,7 +80,6 @@ fn main() -> ExitCode {
             }
         }
     }
-    println!();
 
     let context  = sdl3::init().unwrap();
     let window   = create_window(&context);
@@ -119,7 +129,7 @@ fn get_object_map() -> MutexGuard<'static, BTreeMap<String, CelestialBody>> {
 }
 
 fn read_data(path: &Path) {
-    println!("# {}", path.display());
+    info!("Loading {}...", path.display());
 
     let mut file = File::open(path).unwrap();
     let mut contents = String::new();
@@ -147,7 +157,7 @@ fn create_window(sdl_context: &Sdl) -> Window {
 }
 
 fn create_vulkan_instance(window: &Window) -> Entry {
-    println!("Initializing Vulkan...");
+    info!("Initializing Vulkan...");
 
     let entry = unsafe {
         match Entry::load() {
@@ -211,7 +221,7 @@ fn dump_vulkan_version(entry: &Entry) {
     let minor = vk::api_version_minor(api_version);
     let patch = vk::api_version_patch(api_version);
 
-    println!("# Vulkan {}.{}.{}", major, minor, patch);
+    info!("Vulkan {}.{}.{}", major, minor, patch);
 }
 
 fn dump_vulkan_extensions(entry: &Entry) {
@@ -223,6 +233,6 @@ fn dump_vulkan_extensions(entry: &Entry) {
 
     for extension in extensions {
         let name = extension.extension_name_as_c_str().unwrap();
-        println!("# {}", name.to_string_lossy());
+        info!("{}", name.to_string_lossy());
     }
 }

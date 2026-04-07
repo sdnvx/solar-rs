@@ -213,6 +213,43 @@ fn create_vulkan_instance(window: &Window) -> ash::Instance {
     return instance;
 }
 
+fn create_logical_device(
+    instance: &ash::Instance,
+    physical_device: &PhysicalDevice
+) -> ash::Device {
+    let queue_families = unsafe {
+        instance.get_physical_device_queue_family_properties(*physical_device)
+    };
+    let graphics_queue = queue_families.iter().position(
+        |&family| family.queue_flags.contains(QueueFlags::GRAPHICS)
+    ).unwrap();
+
+    let queue_priorities = &[1.0];
+    let queue_info = vk::DeviceQueueCreateInfo::default()
+        .queue_family_index(graphics_queue.try_into().unwrap())
+        .queue_priorities(queue_priorities);
+
+    // Required by Vulkan SDK on macOS since 1.3.216.
+    let mut extensions = vec![];
+    if cfg!(target_os = "macos") {
+        extensions.push(vk::KHR_PORTABILITY_SUBSET_NAME.as_ptr());
+    }
+
+    let features = vk::PhysicalDeviceFeatures::default();
+
+    let queue_infos = &[queue_info];
+    let device_info = vk::DeviceCreateInfo::default()
+        .queue_create_infos(queue_infos)
+        .enabled_extension_names(&extensions)
+        .enabled_features(&features);
+
+    return unsafe {
+        instance
+            .create_device(*physical_device, &device_info, None)
+            .expect("Failed to create logical device")
+    };
+}
+
 fn pick_physical_device(instance: &ash::Instance) -> Option<PhysicalDevice> {
     info!("Scanning for physical devices...");
 
@@ -241,7 +278,7 @@ fn pick_physical_device(instance: &ash::Instance) -> Option<PhysicalDevice> {
         info!("-- API: {}.{}.{}", api_major, api_minor, api_patch);
         info!("-- Type: {:?}", properties.device_type);
 
-        if !is_device_suitable(instance, &device) {
+        if !is_physical_device_suitable(instance, &device) {
             info!("-- Device is not suitable");
             continue;
         }
@@ -275,7 +312,10 @@ fn pick_physical_device(instance: &ash::Instance) -> Option<PhysicalDevice> {
     return Some(device);
 }
 
-fn is_device_suitable(instance: &ash::Instance, device: &PhysicalDevice) -> bool {
+fn is_physical_device_suitable(
+    instance: &ash::Instance,
+    device: &PhysicalDevice
+) -> bool {
     // Check Vulkan API version
     let properties = unsafe { instance.get_physical_device_properties(*device) };
     if properties.api_version < vk::API_VERSION_1_3 {

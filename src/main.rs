@@ -10,7 +10,7 @@ use std::time::Duration;
 
 use clap::Parser;
 use serde::Deserialize;
-use tracing::{info};
+use tracing::{error, info};
 use tracing_subscriber;
 use tracing_subscriber::fmt;
 
@@ -59,31 +59,14 @@ fn main() -> ExitCode {
     println!("Copyright (c) 2026, Dmitry Sednev <dmitry@sednev.ru>");
     println!();
 
-    fmt()
-        .with_max_level(tracing::Level::DEBUG)
-        .without_time()
-        .with_target(false)
-        .compact()
-        .with_ansi(true)
-        .init();
-
-    let data_dir = get_data_dir(&args.data);
-
-    info!("Scanning {}...", data_dir.display());
-    for entry in std::fs::read_dir(&data_dir).unwrap() {
-        match entry {
-            Ok(path) => {
-                read_data(&path.path());
-            }
-            Err(msg) => {
-                panic!("Error: {}", msg);
-            }
-        }
-    }
+    init_logging();
+    load_data(get_data_dir(&args.data));
 
     let context  = sdl3::init().unwrap();
     let window   = create_window(&context);
     let instance = create_vulkan_instance(&window);
+
+    let device = pick_physical_device(&instance);
 
     let mut event_pump = context.event_pump().unwrap();
     'running: loop {
@@ -103,6 +86,16 @@ fn main() -> ExitCode {
     return ExitCode::SUCCESS;
 }
 
+fn init_logging() {
+    fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .without_time()
+        .with_target(false)
+        .compact()
+        .with_ansi(true)
+        .init();
+}
+
 fn get_data_dir(path: &String) -> PathBuf {
     let data_dir = match Path::new(path).canonicalize() {
         Ok(dir) => {
@@ -120,6 +113,21 @@ fn get_data_dir(path: &String) -> PathBuf {
     data_dir
 }
 
+fn load_data(data_dir: PathBuf) {
+    info!("Loading {}...", data_dir.display());
+
+    for entry in std::fs::read_dir(&data_dir).unwrap() {
+        match entry {
+            Ok(path) => {
+                load_data_file(&path.path());
+            }
+            Err(msg) => {
+                panic!("Error: {}", msg);
+            }
+        }
+    }
+}
+
 fn get_object_map() -> MutexGuard<'static, BTreeMap<String, CelestialBody>> {
     static MAP: OnceLock<Mutex<BTreeMap<String, CelestialBody>>> = OnceLock::new();
 
@@ -128,8 +136,8 @@ fn get_object_map() -> MutexGuard<'static, BTreeMap<String, CelestialBody>> {
         .expect("Let's hope the lock isn't poisoned")
 }
 
-fn read_data(path: &Path) {
-    info!("Loading {}...", path.display());
+fn load_data_file(path: &Path) {
+    info!("- {}...", path.display());
 
     let mut file = File::open(path).unwrap();
     let mut contents = String::new();
@@ -156,7 +164,7 @@ fn create_window(sdl_context: &Sdl) -> Window {
         .unwrap();
 }
 
-fn create_vulkan_instance(window: &Window) -> Entry {
+fn create_vulkan_instance(window: &Window) -> ash::Instance {
     info!("Initializing Vulkan...");
 
     let entry = unsafe {
@@ -202,7 +210,88 @@ fn create_vulkan_instance(window: &Window) -> Entry {
         );
     }
 
-    return entry;
+    return instance;
+}
+
+fn pick_physical_device(instance: &ash::Instance) -> Option<PhysicalDevice> {
+    info!("Scanning for physical devices...");
+
+    let devices = unsafe {
+        instance
+            .enumerate_physical_devices()
+            .expect("Unable to enumerate Vulkan physical devices")
+    };
+
+    if devices.is_empty() {
+        error!("Failed to find GPUs with Vulkan support!");
+        return None;
+    }
+
+    let mut candidates: Vec<(PhysicalDevice, u32)> = Vec::new();
+
+    for device in devices {
+        let properties = unsafe { instance.get_physical_device_properties(device) };
+
+        let device_name = properties.device_name_as_c_str().unwrap().to_string_lossy();
+        let api_major = vk::api_version_major(properties.api_version);
+        let api_minor = vk::api_version_minor(properties.api_version);
+        let api_patch = vk::api_version_patch(properties.api_version);
+
+        info!("- {}", device_name);
+        info!("-- API: {}.{}.{}", api_major, api_minor, api_patch);
+        info!("-- Type: {:?}", properties.device_type);
+
+        if !is_device_suitable(instance, &device) {
+            info!("-- Device is not suitable");
+            continue;
+        }
+
+        let score: u32 = match properties.device_type {
+            PhysicalDeviceType::DISCRETE_GPU => 2000,
+            PhysicalDeviceType::INTEGRATED_GPU => 1000,
+            _ => 0
+        };
+        info!("-- Score: {}", score);
+
+        candidates.push((device, score));
+    }
+
+    if candidates.is_empty() {
+        error!("No suitable GPUs found");
+        return None;
+    }
+
+    let device_index = candidates.iter().enumerate().fold(
+        (0, 0),
+        |max, (index, &val)| if val.1 > max.1 { (index, val.1) } else { max }
+    ).0;
+
+    let device = candidates[device_index].0;
+    let properties = unsafe { instance.get_physical_device_properties(device) };
+
+    let device_name = properties.device_name_as_c_str().unwrap().to_string_lossy();
+    info!("Using GPU: {}", device_name);
+
+    return Some(device);
+}
+
+fn is_device_suitable(instance: &ash::Instance, device: &PhysicalDevice) -> bool {
+    // Check Vulkan API version
+    let properties = unsafe { instance.get_physical_device_properties(*device) };
+    if properties.api_version < vk::API_VERSION_1_3 {
+        return false;
+    }
+
+    // Check if any of the queue families support graphics operations
+    let queue_families = unsafe { instance.get_physical_device_queue_family_properties(*device) };
+    let supports_graphics = queue_families.iter().any(
+        |&family| family.queue_flags.contains(QueueFlags::GRAPHICS)
+    );
+    if !supports_graphics {
+        return false;
+    }
+
+    return true;
 }
 
 fn dump_vulkan_version(entry: &Entry) {
@@ -221,7 +310,7 @@ fn dump_vulkan_version(entry: &Entry) {
     let minor = vk::api_version_minor(api_version);
     let patch = vk::api_version_patch(api_version);
 
-    info!("Vulkan {}.{}.{}", major, minor, patch);
+    info!("- Vulkan {}.{}.{}", major, minor, patch);
 }
 
 fn dump_vulkan_extensions(entry: &Entry) {
@@ -233,6 +322,6 @@ fn dump_vulkan_extensions(entry: &Entry) {
 
     for extension in extensions {
         let name = extension.extension_name_as_c_str().unwrap();
-        info!("{}", name.to_string_lossy());
+        info!("- {}", name.to_string_lossy());
     }
 }
